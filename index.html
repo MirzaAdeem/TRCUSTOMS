@@ -1,400 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet"
-		href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-		integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-		crossorigin="anonymous" />
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+            integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous" />
 
-	<title>TR CUSTOMS</title>
-	<style>
-		body {
-			font-family: 'Times New Roman', Times, serif;
-		}
+        <title>TR CUSTOMS</title>
+        <style>
+            .footer-bs {
+                position: absolute;
+                width: 100%;
+                bottom: 0px;
+                left: 0;
+            }
 
-		.footer-bs {
-			position: absolute;
-			width: 100%;
-			bottom: 0px;
-			left: 0;
-		}
-	</style>
-</head>
+            @media print {
+                @page {
+                    margin: 0;
+                }
 
-<body class="">
-	<div class="m-2 d-print-none " id="data_page">
-		<div class="card text-center">
-			<div class="card-body">
-				<h1 class="card-title font-weight-bolder text-primary mb-2">TR
-					CUSTOM's
-				</h1>
-			</div>
-			<!-- TODO: This is for server side, there is another version for browser defaults -->
-			<form id="mainForm" class="px-3">
-				<div class="row">
-					<div class="col-6 mb-3">
-						<label for="customer">Customer Name & Address</label>
-						<!-- <textarea class="form-control" id="customer"
-							name="customer" rows="4"></textarea> -->
+                th,
+                td {
+                    border: solid #000 !important;
+                    border-width: 1px !important;
+                }
+            }
+        </style>
+    </head>
 
-						<pre class="form-control" id="customer"
-							contenteditable="true"
-							style="min-height: 130px;"></pre>
-					</div>
-					<div class="col-6 mb-3">
-						<div class="row mx-0">
-							<div class="mb-2 col-6">
-								<label for="invoice_no">Invoice No</label>
-								<input type="text" class="form-control"
-									name="invoice_no" id="invoice_no">
-							</div>
-							<div class="mb-2 col-6">
+    <body class="">
+        <div class="m-2 d-print-none " id="data_page">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title font-weight-bolder text-dark mb-2">TR
+                        CUSTOM's
+                    </h3>
+                </div>
+                <form id="mainForm" class="px-3">
+                    <div class="row">
+                        <div class="col-9 mb-3">
+                            <label for="customer">Customer Name & Address</label>
+                            <pre class="form-control" id="customer" contenteditable="true" style="min-height: 130px;"></pre>
+                        </div>
+                        <div class="col-3 mb-3">
+                            <div class="row mx-0">
+                                <div class="mb-2 col-12">
+                                    <label for="invoice_no">Invoice No</label>
+                                    <input type="text" class="form-control" name="invoice_no" id="invoice_no">
+                                </div>
+                                <div class="mb-2 col-6">
+                                    <label for="date">Invoice Due Date</label>
+                                    <input type="date" class="form-control" name="date" id="date" defaultValue="2023/12/12">
+                                </div>
+                                <div class="col-6">
+                                    <label for="payment_date">Invoice Due
+                                        Date</label>
+                                    <input type="date" class="form-control" name="payment_date" id="payment_date" defaultValue="2023/12/12">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div id="invoice_items"></div>
+                            <div class="row mx-0 mt-4 justify-content-end">
+                                <button class="btn btn-dark mr-2" id="add_items" type="button">
+                                    Add More Items
+                                </button>
+                                <button class="btn btn-danger mr-2" type="reset">
+                                    RESET
+                                </button>
+                                <button class="btn btn-success" id="submit" type="submit">
+                                    PRINT
+                                </button>
 
-								<label for="date">Date</label>
-								<input type="date" class="form-control"
-									name="date" id="date"
-									defaultValue="2023/12/12">
-							</div>
-							<div class="col-12">
-								<label for="customer_id">Customer ID</label>
-								<input type="text" class="form-control"
-									name="customer_id" id="customer_id">
-							</div>
-						</div>
-					</div>
-					<div class="col-12 mb-3">
-						<div id="invoice_items"></div>
-						<div class="row mx-0 mt-4 justify-content-end">
-							<button class="btn btn-primary mr-2" id="add_items"
-								type="button">
-								Add More Items
-							</button>
-							<button class="btn btn-danger mr-2" type="reset">
-								RESET
-							</button>
-							<button class="btn btn-success" id="submit"
-								type="submit">
-								PRINT
-							</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+        <div class="d-print-flex d-none flex-column justify-content-between h-100 m-5" id="invoice_page">
+            <div class="px-3">
+                <div class="row justify-content-evenly mb-3 pb-0">
+                    <div class="col-7">
+                        <h4 class="font-weight-bolder text-dark"> TR CUSTOM'S </h4>
+                        <p class=" mb-0"> 10 HAYNES ROAD </p>
+                        <p class=" mb-0"> LE5 4AQ, LEICESTER </p>
+                        <p class="mb-0">0750-622-1089</p>
+                    </div>
+                    <div class="col-5">
+                        <div class="d-flex flex-column align-items-end">
+                            <h3 class="display-5 font-weight-bolder"> INVOICE </h3>
+                            <div class="d-flex">
+                                <p class="font-weight-bold">INVOICE #</p>
+                                <p class="" id="invoice"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mx-0 mb-3">
+                    <div class="col-6 pl-0 pt-2">
+                        <h6 class="font-weight-bolder">BILL TO</h6>
+                        <p id="customer_details"></p>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex justify-content-end align-items-end">
+                            <p class="font-weight-bold">Invoice Due: </p>
+                            <p class="text-end" id="inv_date"></p>
 
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-	</div>
-	<div class="d-print-flex d-none flex-column justify-content-between h-100 p-2 "
-		id="invoice_page">
-		<div class="px-3">
-			<div class="row justify-content-evenly mb-5 pb-5">
-				<div class="col-7">
-					<h1 class="display-4 font-weight-bolder text-primary">
-						TR CUSTOM'S
-					</h1>
-					<h4 class="font-weight-bolder">ROMAN PACHUL SKI</h4>
-					<h5 class="font-weight-bolder">
-						10 HAYNES ROAD, LE5 4AQ, LEICESTER
-					</h5>
-					<h5 class="font-weight-bolder">0750-622-1089</h5>
-				</div>
-				<div class="col-5">
-					<h2 class="display-3 font-weight-bolder text-primary">
-						INVOICE
-					</h2>
-				</div>
-			</div>
-			<div class="row mx-0 mb-3">
-				<div class="col-5 border rounded pt-2">
-					<div class="rounded-pill px-3">
-						<div class="">
-							<h5 class="font-weight-bolder">BILL TO</h5><br />
-							<p id="customer_details"></p>
-						</div>
-					</div>
-				</div>
-				<div class="col-1"></div>
-				<div class="col-6 border rounded">
-					<div class="px-3 pt-2">
-						<div
-							class="row justify-content-around mb-1 border-bottom">
-							<div class="col-6">
-								<p class="mb-0 font-weight-bolder">
-									INVOICE #
-								</p>
-							</div>
-							<div class="col-6">
-								<p class="mb-0 font-weight-bolder text-end">
-									DATE
-								</p>
-							</div>
-						</div>
-						<div class="row justify-content-around mb-3">
-							<div class="col-6">
-								<p class="" id="invoice"></p>
-							</div>
-							<div class="col-6">
-								<p class="text-end" id="print_date"></p>
-							</div>
-						</div>
-						<div
-							class="row justify-content-around mb-1 border-bottom">
-							<div class="col-6">
-								<p class="mb-0 font-weight-bolder">
-									CUSTOMER ID
-								</p>
-							</div>
-							<div class="col-6">
-								<p class="mb-0 font-weight-bolder text-end">
-									TERMS
-								</p>
-							</div>
-						</div>
-						<div class="row justify-content-around mb-3">
-							<div class="col-6">
-								<p class="" id="customers_id"></p>
-							</div>
-							<div class="col-6">
-								<p class="fs-6 text-end" id="terms">
-									Due Upon Receipt
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="table-responsive">
-					<table class="table table-bordered">
-						<thead>
-							<tr>
-								<th scope="col" style="width: 60%">
-									Description
-								</th>
-								<th scope="col" style="width: 10%">QTY</th>
-								<th scope="col" style="width: 15%">
-									Unit Price
-								</th>
-								<th scope="col" style="width: 15%">
-									Amount
-								</th>
-							</tr>
-						</thead>
-						<tbody>
+                        </div>
+                        <div class="d-flex justify-content-end align-items-end">
+                            <p class="font-weight-bold">Payment Due: </p>
+                            <p class="text-end" id="pay_date"></p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="table">
+                            <thead class="thead-dark border border-dark border-1">
+                                <tr class="bg-dark border">
+                                    <th scope="col" style="width: 1%"> # </th>
+                                    <th scope="col" style="width: 60%"> Description </th>
+                                    <th scope="col" style="width: 10%">QTY</th>
+                                    <th scope="col" style="width: 15%"> Unit Price </th>
+                                    <th scope="col" style="width: 15%"> Amount </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr style="border: none !important">
+                                    <td class=" font-weight-bolder font-italic text-center" colspan='2' style="border: none !important">
+                                        Thanks for your business!
+                                    </td>
+                                    <td colspan="2" class="border">
+                                        <h6 class="mb-1 font-weight-bolder text-end"> Subtotal </h6>
+                                    </td>
+                                    <td class="border">
+                                        <h6 class="mb-1" id="subtotal"></h6>
+                                    </td>
+                                </tr>
+                                <tr style="border: none !important">
+                                    <td style="border: none !important" colspan='2'></td>
+                                    <td colspan="2" class="border">
+                                        <h6 class="mb-1 font-weight-bolder text-end"> Total </h6>
+                                    </td>
+                                    <td class="border">
+                                        <h6 class="mb-1" id="total"></h6>
+                                    </td>
+                                </tr>
 
 
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-		<footer class="footer-bs mt-auto bg-light px-5">
-			<div class="container px-5 text-center">
-				<p class="mb-0 text-muted text-center">
-					If you have any question, Please Contact.
-				</p>
-				<div class="d-flex justify-content-between">
-					<p class="text-nowrap">TR CUSTOM'S</p>
-					<p class="text-nowrap">ROMAN PACHULSKI</p>
-					<p class="text-nowrap">0750-622-1089</p>
-				</div>
-			</div>
-		</footer>
-	</div>
+            <footer class="footer-bs mt-auto bg-light px-5">
+                <div class="container px-5 text-center">
+                    <p class="mb-0 text-muted text-center">
+                        If you have any question, Please Contact.
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <p class="text-nowrap">TR CUSTOM'S</p>
+                        <p class="text-nowrap">ROMAN PACHULSKI</p>
+                        <p class="text-nowrap">0750-622-1089</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
-		integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
-		crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+            integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
 
-	<script>
+        <script>
 
-		$(document).ready(function () {
-			document.getElementById("date").defaultValue = new Date().toISOString().slice(0, 10)
-			var rowListNumber = 0;
-			addRowFields(rowListNumber);
+            $(document).ready(function () {
+                document.getElementById("date").defaultValue = new Date().toISOString().slice(0, 10)
+                var rowListNumber = 0;
+                addRowFields(rowListNumber);
+            });
 
 
+            $("#add_items").click(function () {
+                addRowFields(rowListNumber);
+            });
+
+            function addRowFields(number) {
+                rowListNumber = number + 1;
+                var tbodyData = `
+                <tr style="border: none !important">
+                    <td class=" font-weight-bolder font-italic text-center" colspan='2' style="border: none !important">
+                        Thanks for your business!
+                    </td>
+                    <td colspan="2" class="border"> <h6 class="mb-1 font-weight-bolder text-end"> Subtotal </h6>  </td>
+                    <td class="border">  <h6 class="mb-1" id="subtotal"></h6> </td>
+                </tr>
+                <tr style="border: none !important">
+                    <td style="border: none !important" colspan='2'></td>
+                    <td colspan="2" class="border"> <h6 class="mb-1 font-weight-bolder text-end"> Total </h6>   </td>
+                    <td class="border">  <h6 class="mb-1" id="total"></h6>  </td>
+                </tr>`;
+                $("tbody").html(tbodyData);
+                const html = `
+                    <div class="mb-2 row mx-0">
+                        <div class="col-6">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control description-${number}" name="description-${number}">
+                        </div>
+                        <div class="col-2">
+                            <label for="qty" class="form-label">QTY</label>
+                            <input type="number" name="qty-${number}"  class="form-control qty" value="1" data-index="${number}">
+                        </div>
+                        <div class="col-2">
+                            <label for="unit_price" class="form-label">Unit Price</label>
+                            <input type="number" step="0.01" class="form-control unit_price" value="0.00" name="unit_price-${number}" data-index="${number}" >
+                        </div>
+                        <div class="col-2">
+                            <label for="total" class="form-label">Total</label>
+                            <input type="number" step="0.01" class="form-control total" readonly value="0.00" name="total-${number}" data-index="${number}" >
+                        </div>
+                    </div>
+			        `;
+                $("#invoice_items").append(html);
+                $(`.description-${number}`).focus()
 
 
+                $(".qty").on("change", function () {
+                    const index = $(this).data("index");
+                    const unitPrice = $(`input[name="unit_price-${index}"]`).val();
+                    const qty = $(this).val();
+                    const total = unitPrice * qty;
+                    $(`input[name="total-${index}"]`).val(total);
+                });
 
 
-		});
+                $(".unit_price").on("change", function () {
+                    const index = $(this).data("index");
+                    console.log(index);
+                    const qty = $(`input[name="qty-${index}"]`).val();
+                    const unitPrice = $(this).val();
+                    const total = unitPrice * qty;
+                    $(`input[name="total-${index}"]`).val(total);
+                });
+            }
 
 
-		$("#add_items").click(function () {
-			addRowFields(rowListNumber);
-		});
+            const form = document.getElementById("mainForm");
 
+            form.addEventListener("submit", handleSubmit);
 
-		function addRowFields(number) {
-			rowListNumber = number + 1;
-			$("tbody").html(`<tr style="border: none !important">
-								<td class="text-primary font-weight-bold font-italic text-center"
-									style="border: none !important">
-									Thanks for your business!
-								</td>
-								<td colspan="2" class="border">
-									<h6
-										class="mb-1 font-weight-bolder text-end">
-										Subtotal
-									</h6>
-								</td>
-								<td class="border">
-									<h6 class="mb-1" id="subtotal"></h6>
-								</td>
-							</tr>
-							<tr style="border: none !important">
-								<td style="border: none !important"></td>
-								<td colspan="2" class="border">
-									<h6 class="font-weight-bolder text-end">
-										Tax
-									</h6>
-								</td>
-								<td class="border">
-									<h6 id="tax"></h6>
-								</td>
-							</tr>
-							<tr style="border: none !important">
-								<td style="border: none !important"></td>
-								<td colspan="2" class="border">
-									<h6
-										class="mb-1 font-weight-bolder text-end">
-										Total
-									</h6>
-								</td>
-								<td class="border">
-									<h6 class="mb-1" id="total"></h6>
-								</td>
-							</tr>`);
-			const html = `
-			<div class="mb-2">
-				<div class="row mx-0">
-					<div class="col-6">
-						<label for="description"
-							class="form-label">Description</label>
-						<input type="text" class="form-control description-${number}"
-							name="description-${number}">
-					</div>
-					<div class="col-2">
-						<label for="qty"
-							class="form-label">QTY</label>
-						<input type="number" name="qty-${number}"
-							class="form-control qty" value="1" data-index="${number}">
-					</div>
-					<div class="col-2">
-						<label for="unit_price"
-							class="form-label">Unit
-							Price</label>
-						<input type="number" step="0.01"
-							class="form-control unit_price"
-							value="0.00"
-							name="unit_price-${number}" data-index="${number}" >
-					</div>
-					<div class="col-2">
-						<label for="total"
-							class="form-label">Total
-						</label>
-						<input type="number" step="0.01"
-							class="form-control total" readonly value="0.00" name="total-${number}" data-index="${number}"
-							>
-					</div>
-				</div>
-			</div>
-			`;
-			$("#invoice_items").append(html);
-			$(`.description-${number}`).focus()
+            function handleSubmit(e) {
+                e.preventDefault();
+                const data = new FormData(e.target);
+                const values = Object.fromEntries(data.entries());
+                console.log(values, rowListNumber);
+                console.log($("#customer").html());
+                $("#customer_details").html($("#customer").html());
+                $("#invoice").text(values.invoice_no);
+                $("#inv_date").text(values.date);
+                $("#customers_id").text(values.customer_id);
+                $('#pay_date').text(values.payment_date);
 
-
-			$(".qty").on("change", function () {
-				const index = $(this).data("index");
-				const unitPrice = $(`input[name="unit_price-${index}"]`).val();
-				const qty = $(this).val();
-				const total = unitPrice * qty;
-				$(`input[name="total-${index}"]`).val(total);
-			});
-
-
-			$(".unit_price").on("change", function () {
-				const index = $(this).data("index");
-				console.log(index);
-				const qty = $(`input[name="qty-${index}"]`).val();
-				const unitPrice = $(this).val();
-				const total = unitPrice * qty;
-				$(`input[name="total-${index}"]`).val(total);
-			});
-		}
-
-
-		const form = document.getElementById("mainForm");
-
-		form.addEventListener("submit", handleSubmit);
-
-		function handleSubmit(e) {
-			e.preventDefault();
-			const data = new FormData(e.target);
-			const values = Object.fromEntries(data.entries());
-			console.log(values, rowListNumber);
-			$("#customer_details").html($("#customer").html());
-			$("#invoice").text(values.invoice_no);
-			$("#print_date").text(values.date);
-			$("#customers_id").text(values.customer_id);
-
-			const itemsRow = Array.from({ length: rowListNumber }).map((_, n) => n).reverse().map((i) => ({
-				description: values[`description-${i}`],
-				qty: values[`qty-${i}`],
-				unit_price: values[`unit_price-${i}`],
-				total: values[`total-${i}`],
-			}));
-
-			let totalValue = 0;
-
-			itemsRow.forEach((item) => {
-
-				const html = `
-				<tr>
-					<td>${item.description}</td>
-					<td>${item.qty}</td>
-					<td>£ ${item.unit_price}</td>
-					<td>£ ${item.total}</td>
-				</tr>
-				`;
-				$("tbody").prepend(html);
-				totalValue += parseInt(item.total);
-
-			})
-
-
-			$("#subtotal").text(`£ ${totalValue}`);
-			$("#tax").text(`5%`);
-			$("#total").text(`£ ${totalValue + (totalValue * 5) / 100}`);
-
-
-
-
-
-			window.print();
-
-		}
-
-
-
-	</script>
-</body>
-
+                const itemsRow = Array.from({ length: rowListNumber }).map((_, n) => n).reverse().map((i) => ({
+                    number: `${i}`,
+                    description: values[`description-${i}`],
+                    qty: values[`qty-${i}`],
+                    unit_price: values[`unit_price-${i}`],
+                    total: values[`total-${i}`],
+                }));
+                let totalValue = 0;
+                itemsRow.forEach((item) => {
+                    const html = `
+                        <tr>
+                            <td>${item.number + 1}</td>
+                            <td>${item.description}</td>
+                            <td>${item.qty}</td>
+                            <td>£ ${item.unit_price}</td>
+                            <td>£ ${item.total}</td>
+                        </tr>
+                        `;
+                    $("tbody").prepend(html);
+                    totalValue += parseInt(item.total);
+                })
+                $("#subtotal").text(`${totalValue}`);
+                $("#total").text(`£ ${totalValue}`);
+                window.print();
+            }
+        </script>
+    </body>
 </html>
